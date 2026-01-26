@@ -7,6 +7,7 @@ import { VolatilityPanel } from '@/components/panels/VolatilityPanel';
 import { RiskZonesPanel } from '@/components/panels/RiskZonesPanel';
 import { DependencyTreePanel } from '@/components/panels/DependencyTreePanel';
 import { SummaryPanel } from '@/components/panels/SummaryPanel';
+import { RepoInsightsPanel } from '@/components/panels/RepoInsightsPanel';
 import { LoadingState } from '@/components/ui/LoadingSpinner';
 import { ArrowLeft, Star, GitFork, ExternalLink, Shield } from 'lucide-react';
 
@@ -48,12 +49,17 @@ export default function AnalyzePage() {
 
     const { repoInfo, fileTree, volatileFiles, riskZones, dependencyAnalysis, summary } = analysis;
 
+    // Calculate commit frequency from volatile files
+    const totalCommits = volatileFiles.reduce((sum, f) => sum + f.commitCount, 0);
+    const uniqueContributors = new Set(volatileFiles.map(f => f.contributors)).size;
+    const commitFrequency = totalCommits > 100 ? 'High' : totalCommits > 30 ? 'Moderate' : 'Low';
+
     return (
         <div className="min-h-screen bg-[--bg-base]">
-            {/* Header - solid background, not transparent */}
-            <header className="border-b border-[--border] bg-[--bg-primary] sticky top-0 z-50">
-                <div className="max-w-[1500px] mx-auto px-5 h-12 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+            {/* Header - solid background */}
+            <header className="border-b border-[--border] bg-[--bg-secondary] sticky top-0 z-50">
+                <div className="max-w-[1600px] mx-auto px-5 h-12 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
                         <button
                             onClick={() => router.push('/')}
                             className="flex items-center gap-1.5 text-[--text-secondary] hover:text-[--text-primary] transition-colors text-sm"
@@ -69,6 +75,11 @@ export default function AnalyzePage() {
                                 <Shield size={12} className="text-[--bg-base]" />
                             </div>
                             <span className="text-sm font-medium text-[--text-primary]">{repoInfo.fullName}</span>
+                            {repoInfo.archived && (
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[--warning-subtle] text-[--warning]">
+                                    ARCHIVED
+                                </span>
+                            )}
                         </div>
                     </div>
 
@@ -101,20 +112,32 @@ export default function AnalyzePage() {
                 </div>
             </header>
 
-            {/* Dashboard Grid */}
-            <main className="max-w-[1500px] mx-auto p-5">
-                <div className="dashboard-grid">
-                    <div className="min-h-[480px]">
+            {/* Main Content */}
+            <main className="max-w-[1600px] mx-auto p-5">
+                {/* Top Section: Insights + Summary */}
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="col-span-1">
+                        <RepoInsightsPanel
+                            repoInfo={repoInfo}
+                            contributorCount={uniqueContributors}
+                            commitFrequency={commitFrequency}
+                        />
+                    </div>
+                    <div className="col-span-2 min-h-[380px]">
+                        <SummaryPanel summary={summary} repoInfo={repoInfo} />
+                    </div>
+                </div>
+
+                {/* Analysis Panels */}
+                <div className="grid grid-cols-3 gap-4">
+                    <div className="min-h-[400px]">
                         <VolatilityPanel fileTree={fileTree} volatileFiles={volatileFiles} />
                     </div>
-                    <div className="min-h-[480px]">
+                    <div className="min-h-[400px]">
                         <RiskZonesPanel riskZones={riskZones} />
                     </div>
-                    <div className="min-h-[480px]">
+                    <div className="min-h-[400px]">
                         <DependencyTreePanel dependencyAnalysis={dependencyAnalysis} />
-                    </div>
-                    <div className="min-h-[480px]">
-                        <SummaryPanel summary={summary} repoInfo={repoInfo} />
                     </div>
                 </div>
 

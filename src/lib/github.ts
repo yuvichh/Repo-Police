@@ -90,7 +90,16 @@ export async function fetchRepoInfo(owner: string, repo: string): Promise<RepoIn
         defaultBranch: data.default_branch,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
+        pushedAt: data.pushed_at,
         language: data.language,
+        license: data.license?.spdx_id || null,
+        topics: data.topics || [],
+        size: data.size,
+        watchers: data.subscribers_count,
+        hasWiki: data.has_wiki,
+        hasPages: data.has_pages,
+        archived: data.archived,
+        isTemplate: data.is_template,
     };
 }
 
