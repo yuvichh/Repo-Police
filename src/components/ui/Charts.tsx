@@ -20,12 +20,12 @@ import {
     Legend,
 } from 'recharts';
 
-// Color palette for charts
+// Color palette for charts - matching teal theme
 const COLORS = {
-    success: '#4ade80',
+    success: '#34d399',
     warning: '#fbbf24',
-    danger: '#f87171',
-    accent: '#a78bfa',
+    danger: '#fb7185',
+    accent: '#2dd4bf',
     muted: '#71717a',
 };
 

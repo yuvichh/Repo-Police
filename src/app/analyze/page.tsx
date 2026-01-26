@@ -8,6 +8,7 @@ import { RiskZonesPanel } from '@/components/panels/RiskZonesPanel';
 import { DependencyTreePanel } from '@/components/panels/DependencyTreePanel';
 import { SummaryPanel } from '@/components/panels/SummaryPanel';
 import { RepoInsightsPanel } from '@/components/panels/RepoInsightsPanel';
+import { ActivityPanel } from '@/components/panels/ActivityPanel';
 import { LoadingState } from '@/components/ui/LoadingSpinner';
 import { ArrowLeft, Star, GitFork, ExternalLink, Shield } from 'lucide-react';
 
@@ -49,52 +50,98 @@ export default function AnalyzePage() {
 
     const { repoInfo, fileTree, volatileFiles, riskZones, dependencyAnalysis, summary } = analysis;
 
-    // Calculate commit frequency from volatile files
+    // Calculate metrics
     const totalCommits = volatileFiles.reduce((sum, f) => sum + f.commitCount, 0);
     const uniqueContributors = new Set(volatileFiles.map(f => f.contributors)).size;
     const commitFrequency = totalCommits > 100 ? 'High' : totalCommits > 30 ? 'Moderate' : 'Low';
 
     return (
         <div className="min-h-screen bg-[--bg-base]">
-            {/* Header - solid background */}
-            <header className="border-b border-[--border] bg-[--bg-secondary] sticky top-0 z-50">
-                <div className="max-w-[1600px] mx-auto px-5 h-12 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+            {/* Fixed Header */}
+            <header style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 100,
+                backgroundColor: '#19191d',
+                borderBottom: '1px solid rgba(255,255,255,0.06)'
+            }}>
+                <div style={{
+                    maxWidth: '1600px',
+                    margin: '0 auto',
+                    padding: '0 20px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                }}>
+                    {/* Left side */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <button
                             onClick={() => router.push('/')}
-                            className="flex items-center gap-1.5 text-[--text-secondary] hover:text-[--text-primary] transition-colors text-sm"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                color: '#a1a1aa',
+                                fontSize: '13px',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer'
+                            }}
                         >
                             <ArrowLeft size={14} />
                             <span>Back</span>
                         </button>
 
-                        <div className="h-4 w-px bg-[--border]" />
+                        <div style={{ width: '1px', height: '16px', backgroundColor: 'rgba(255,255,255,0.1)' }} />
 
-                        <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded bg-[--accent] flex items-center justify-center">
-                                <Shield size={12} className="text-[--bg-base]" />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{
+                                width: '24px',
+                                height: '24px',
+                                borderRadius: '4px',
+                                backgroundColor: '#2dd4bf',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                <Shield size={12} color="#0a0a0c" />
                             </div>
-                            <span className="text-sm font-medium text-[--text-primary]">{repoInfo.fullName}</span>
+                            <span style={{ fontSize: '14px', fontWeight: 500, color: '#f4f4f5' }}>
+                                {repoInfo.fullName}
+                            </span>
                             {repoInfo.archived && (
-                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[--warning-subtle] text-[--warning]">
+                                <span style={{
+                                    fontSize: '9px',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                                    color: '#fbbf24'
+                                }}>
                                     ARCHIVED
                                 </span>
                             )}
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-3 text-xs text-[--text-secondary]">
-                            <div className="flex items-center gap-1">
+                    {/* Right side */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', color: '#a1a1aa' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <Star size={12} />
                                 <span>{formatNumber(repoInfo.stars)}</span>
                             </div>
-                            <div className="flex items-center gap-1">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <GitFork size={12} />
                                 <span>{formatNumber(repoInfo.forks)}</span>
                             </div>
                             {repoInfo.language && (
-                                <span className="px-1.5 py-0.5 rounded bg-[--bg-tertiary] text-[10px]">
+                                <span style={{
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    backgroundColor: '#242429',
+                                    fontSize: '10px'
+                                }}>
                                     {repoInfo.language}
                                 </span>
                             )}
@@ -103,7 +150,18 @@ export default function AnalyzePage() {
                             href={`https://github.com/${repoInfo.fullName}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn-primary text-xs py-1.5 px-3 flex items-center gap-1"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '6px 12px',
+                                borderRadius: '6px',
+                                backgroundColor: '#2dd4bf',
+                                color: '#0a0a0c',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                textDecoration: 'none'
+                            }}
                         >
                             GitHub
                             <ExternalLink size={11} />
@@ -113,36 +171,27 @@ export default function AnalyzePage() {
             </header>
 
             {/* Main Content */}
-            <main className="max-w-[1600px] mx-auto p-5">
-                {/* Top Section: Insights + Summary */}
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="col-span-1">
-                        <RepoInsightsPanel
-                            repoInfo={repoInfo}
-                            contributorCount={uniqueContributors}
-                            commitFrequency={commitFrequency}
-                        />
-                    </div>
-                    <div className="col-span-2 min-h-[380px]">
-                        <SummaryPanel summary={summary} repoInfo={repoInfo} />
-                    </div>
+            <main style={{ maxWidth: '1600px', margin: '0 auto', padding: '20px' }}>
+                {/* Top Row: Insights + Summary + Activity */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                    <RepoInsightsPanel
+                        repoInfo={repoInfo}
+                        contributorCount={uniqueContributors}
+                        commitFrequency={commitFrequency}
+                    />
+                    <SummaryPanel summary={summary} repoInfo={repoInfo} />
+                    <ActivityPanel volatileFiles={volatileFiles} />
                 </div>
 
-                {/* Analysis Panels */}
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="min-h-[400px]">
-                        <VolatilityPanel fileTree={fileTree} volatileFiles={volatileFiles} />
-                    </div>
-                    <div className="min-h-[400px]">
-                        <RiskZonesPanel riskZones={riskZones} />
-                    </div>
-                    <div className="min-h-[400px]">
-                        <DependencyTreePanel dependencyAnalysis={dependencyAnalysis} />
-                    </div>
+                {/* Bottom Row: Analysis Panels */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                    <VolatilityPanel fileTree={fileTree} volatileFiles={volatileFiles} />
+                    <RiskZonesPanel riskZones={riskZones} />
+                    <DependencyTreePanel dependencyAnalysis={dependencyAnalysis} />
                 </div>
 
                 {/* Timestamp */}
-                <p className="mt-5 text-center text-xs text-[--text-faint]">
+                <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '11px', color: '#52525b' }}>
                     Analyzed {new Date(analysis.analyzedAt).toLocaleString()}
                 </p>
             </main>
