@@ -127,7 +127,7 @@ export function ActivityPanel({ volatileFiles }: ActivityPanelProps) {
                                         borderRadius: '6px',
                                         fontSize: '11px',
                                     }}
-                                    formatter={(value: number) => [`${value} commits`, 'Activity']}
+                                    formatter={(value) => [`${value} commits`, 'Activity']}
                                 />
                                 <Bar dataKey="commits" radius={[0, 4, 4, 0]}>
                                     {topFiles.map((entry, index) => (
