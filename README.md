@@ -57,7 +57,7 @@ RepoPolice is a GitHub repository health analyzer that helps developers make inf
 
 ```bash
 # Clone the repository
-git clone https://github.com/Yuvraj-cyborg/Repo-Police.git
+git clone https://github.com/yuvichh/Repo-Police.git
 cd repo-police
 
 # Install dependencies
@@ -179,4 +179,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Developed by [Yuvraj](https://github.com/Yuvraj-cyborg)
+Developed by [Yuvraj](https://github.com/yuvichh)
